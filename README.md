@@ -2,5 +2,5 @@
 This code prints "Hola mundo".
 Author : Nicolas Meza
 hello
-N: hola ... do you speak spanish ?
+R:HOLA 
 
