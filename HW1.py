@@ -39,19 +39,19 @@ def to_ternary(n, length=0):
         if n <= 0:
             return '0'
         else:
-            i = int(np.log(n) / np.log(3))
-            s = {str(i): 0 for i in range(i + 1)}
+            exp = int(np.log(n) / np.log(3))
+            s = {str(i): 0 for i in range(exp + 1)}
 
     while n > 0:
 
-        i = int(np.log(n) / np.log(3))
+        exp = int(np.log(n) / np.log(3))
 
-        if str(i) in s.keys():
-            s[str(i)] += 1
+        if str(exp) in s.keys():
+            s[str(exp)] += 1
         else:
-            s[str(i)] = 1
+            s[str(exp)] = 1
 
-        n -= 3 ** i
+        n -= 3 ** exp
 
     return ''.join([str(x) for x in s.values()])[::-1]
 
