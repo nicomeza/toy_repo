@@ -56,7 +56,7 @@
 # 
 # # Problem 3
 
-# In[32]:
+# In[2]:
 
 
 import numpy as np
@@ -85,29 +85,46 @@ pl.imshow(H.T,interpolation='nearest',origin='lower',extent=[xedges[0], xedges[-
 pl.colorbar()
 
 
+# In[70]:
+
+
+N=1
+sigma = 1
+size=int(1e2)
+
+X = random.multivariate_normal(np.zeros(N),np.diag(sigma**2. * np.ones(N)),size=size)
+
+pl.hist(X,alpha=0.5)
+np.std(X)
+
+
 # # Problem 4
 
-# In[92]:
+# In[83]:
 
 
-def generator(a,sigma=1):
+def generator(a,sigma=0.05):
     
     return np.random.normal(a,sigma)
 
-def likelihood(a,x):
+def loglikelihood(a,x):
     
-    like = 1/np.sqrt(2*pi*a) * np.exp(-x**2. / (2*a))
-    return np.nan_to_num(like,nan=0.0)
-
+    loglike = np.sum(np.log(1/np.sqrt(2*pi*a) * np.exp(-x**2./ (2*a))))
+    return np.nan_to_num(loglike,nan=0.0)
+    
 def prior(a):
     
     return (np.array(a)>0).astype(int)
 
 def posterior(a,x):
     
-    return likelihood(a,x)*prior(a)
+    return np.exp(loglikelihood(a,x))*prior(a)
 
 def MCMC(seed,x,sigma=1):
+    
+    '''seed is the previous value in parameter space.
+    x is the vector of observed values {x_i}.
+    sigma is the meta-parameter controlling the width of the gaussian in the generator function.'''
     
     new = generator(seed,sigma)
     Pnew = posterior(new,x)
@@ -123,48 +140,43 @@ def MCMC(seed,x,sigma=1):
     else:
         return new
     
-    
 
-x = 1
 
-seed = random.uniform(0.01,10)
+seed = random.uniform(0.1,2)
 
 steps = 100
-sigma = 1
+sigma = 0.05
+
 
 chain = []
 
 for i in range(steps):
     
-    chain.append(MCMC(seed,x,sigma=sigma))
-    
+    sprout = MCMC(seed,X,sigma=sigma)
+    chain.append(sprout)
+    seed = sprout
 
 
 # # Problem 5
 # 
 # Plotting the resulting chain.
 
-# In[93]:
+# In[84]:
 
 
 pl.plot(range(steps),chain)
 
 
-
 # # Problem 6
 
-# In[94]:
+# In[81]:
 
 
 a_s = np.linspace(0.01,10,100)
-pl.plot(a_s,posterior(a_s,x))
+# pl.plot(a_s,posterior(a_s,X))
 pl.hist(chain,density=True)
 
-
-# In[85]:
-
-
-
+np.mean(chain)
 
 
 # In[ ]:
